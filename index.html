@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Email Checker</title>
+<style>
+body{
+    background:#0f0f0f;
+    color:#ffffff;
+    font-family:Arial;
+    margin:0;
+    padding:0;
+}
+.container{
+    width:450px;
+    margin:80px auto;
+    padding:40px;
+    background:#1a1a1a;
+    border-radius:12px;
+    text-align:center;
+    position:relative;
+}
+h1{
+    margin-bottom:25px;
+    font-size:24px;
+}
+.app-name{
+    position:absolute;
+    top:10px;
+    left:20px;
+    font-weight:bold;
+    font-size:18px;
+    color:#00ff9d;
+}
+.developer{
+    position:absolute;
+    top:10px;
+    right:20px;
+    font-weight:bold;
+    font-size:16px;
+    color:#ffcc00;
+}
+input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    margin-bottom:15px;
+    background:#2a2a2a;
+    color:white;
+    font-size:15px;
+    transition: background 0.3s, color 0.3s;
+}
+input:focus{
+    outline:none;
+    background:#ffffff;
+    color:#000000;
+}
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:white;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+.result{
+    margin-top:20px;
+    background:#111;
+    padding:15px;
+    border-radius:8px;
+    text-align:left;
+    font-size:14px;
+    display:none;
+}
+.success{
+    color:#00ff9d;
+}
+.error{
+    color:#ff4d4d;
+}
+.theme{
+    margin-top:15px;
+    cursor:pointer;
+    font-size:13px;
+    opacity:.7;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="app-name">Email Check</div>
+<div class="developer">DAMON</div>
+<h1>Email Checker</h1>
+<input id="email" placeholder="Enter Email">
+<button onclick="checkEmail()">Check Email</button>
+<div class="theme" onclick="toggleTheme()">Change Theme</div>
+<div id="result" class="result"></div>
+</div>
+
+<script>
+async function checkEmail(){
+    let email = document.getElementById("email").value
+    let headers = {
+        'authority': 'api.fraudemail.com',
+        'accept': '*/*',
+        'accept-language': 'ar-EG,ar;q=0.9,en-US;q=0.8,en;q=0.7',
+        'content-type': 'application/json',
+        'origin': 'https://fraudemail.com',
+        'referer': 'https://fraudemail.com/',
+        'sec-ch-ua': '"Chromium";v="107", "Not=A?Brand";v="24"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Linux"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        'user-agent': navigator.userAgent
+    }
+    let res = await fetch("https://api.fraudemail.com/email",{
+        method:"POST",
+        headers: headers,
+        body: JSON.stringify({email:email})
+    })
+    let data = await res.json()
+    let box = document.getElementById("result")
+    if(data.status === "valid"){
+        box.innerHTML = `
+<div class="success">Good Email : ${data.email}</div>
+<br>
+New Email Information
+<hr>
+- Email : ${data.email}<br>
+- User : ${data.user}<br>
+- Domain : ${data.domain}<br>
+- Status : ${data.status}<br>
+- Disposable : ${data.disposable}<br>
+- Reason : ${data.reason}
+`
+    } else {
+        box.innerHTML = `<div class="error">Bad Email : ${email}</div>`
+    }
+    box.style.display="block"
+}
+function toggleTheme(){
+    let body = document.body
+    let input = document.querySelector("input")
+    if(body.style.background==="white"){
+        body.style.background="#0f0f0f"
+        body.style.color="white"
+        input.style.background="#2a2a2a"
+        input.style.color="white"
+    } else {
+        body.style.background="white"
+        body.style.color="black"
+        input.style.background="#ffffff"
+        input.style.color="#000000"
+    }
+}
+</script>
+
+</body>
+</html>
